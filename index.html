@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucy Yang| Bugs and Errors</title>
+</head>
+
+<body>
+    <script>
+        // <!-- Excercise 1: retry-->
+        class MultiplicatorUnitFailure extends Error { }
+        // given code
+        function primitiveMultiply(a, b) {
+            if (Math.random() < 0.2) {
+                return a * b;
+            } else {
+                throw new MultiplicatorUnitFailure("Klunk");
+            }
+        }
+
+        function reliableMultiply(a, b) {
+            // Your code here.
+            // checks for bugs
+            "use strict";
+            // while the paramter is true. try the exception (try)
+            while (true) {
+                // if true, then return the product of a and b
+                try {
+                    return primitiveMultiply(a, b);
+                }
+                // the try runs until the next try or catch block
+                catch (excluded) {
+                    // if not excluded is in the fx then a new exception or try is basically rised
+                    if (!(excluded instanceof MultiplicatorUnitFailure))
+                        throw excluded;
+                }
+            }
+
+        }
+
+        // testing the code
+        console.log(reliableMultiply(8, 8));
+        // → 64
+
+        // Excercise 2: LockBox
+        "use strict";
+        //  given code, use "use strict" for errors
+        const box = {
+
+            locked: true,
+            unlock() { this.locked = false; },
+            lock() { this.locked = true; },
+            _content: [],
+            get content() {
+                if (this.locked) throw new Error("Locked!");
+                return this._content;
+            }
+        };
+        function withBoxUnlocked(body) {
+            // Your code here.
+            var boxLocked = box.lock;
+
+            if (boxLocked) {
+                // unlocks
+                box.unlock();
+            }
+            // try is like an alt or exception (allows to be made)
+            try {
+                // returns the body which checks whether or not the lock was locked
+                return body();
+            }
+            // runs after exception is in the try block (exception is the try)
+            finally {
+                // usage of lock method which locks box after it has been unlocked to ensure it wasn't already locked
+                if (boxLocked) {
+                    box.lock
+                }
+            }
+        }
+        // test
+        withBoxUnlocked(function () {
+            box.content.push("gold piece");
+        });
+
+        try {
+            withBoxUnlocked(function () {
+                throw new Error("Pirates on the horizon! Abort!");
+            });
+        } catch (e) {
+            console.log("Error raised: " + e);
+        }
+        console.log(box.locked);
+// → true
+
+// cough 1:30 am tired, lol, got a funeral to go to tomorrow been going since friday and now i have stacks of hw *cries*
+// if u read that, condolences ^
+// there's only two exercises???? right...classroom says three uhh
+    </script>
+</body>
